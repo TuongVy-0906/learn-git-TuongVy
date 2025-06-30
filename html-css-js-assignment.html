@@ -1,0 +1,294 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài tập thực hành HTML, CSS và JavaScript cơ bản</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+        }
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        code {
+            background: #eee;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        pre {
+            background: #f8f8f8;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .note {
+            background: #e7f3fe;
+            border-left: 4px solid #2196F3;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bài tập thực hành HTML, CSS và JavaScript cơ bản</h1>
+        <p><strong>Thời hạn:</strong> 3 ngày (khoảng 6-8 giờ học và thực hành)</p>
+        <p><strong>Mục tiêu:</strong></p>
+        <ul>
+            <li>Hiểu và sử dụng HTML để tạo cấu trúc trang web.</li>
+            <li>Áp dụng CSS để định dạng giao diện.</li>
+            <li>Sử dụng JavaScript cơ bản để thêm tính năng tương tác.</li>
+            <li>Kết hợp Git/GitHub để quản lý và chia sẻ dự án.</li>
+        </ul>
+
+        <h2>Yêu cầu chi tiết</h2>
+
+        <h3>1. Tìm hiểu về HTML, CSS và JavaScript cơ bản</h3>
+        <ul>
+            <li>Tìm hiểu các khái niệm cơ bản và ghi chú ngắn (2-3 câu) về:
+                <ul>
+                    <li>HTML: Cấu trúc trang web, các thẻ cơ bản như <code>&lt;div&gt;</code>, <code>&lt;h1&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;button&gt;</code>.</li>
+                    <li>CSS: Định dạng giao diện, các thuộc tính như <code>color</code>, <code>background</code>, <code>margin</code>, <code>padding</code>.</li>
+                    <li>JavaScript: Tương tác, các khái niệm như biến, hàm, sự kiện (<code>onclick</code>).</li>
+                </ul>
+            </li>
+            <li>Xem ít nhất 1 video hướng dẫn (gợi ý: “HTML & CSS Tutorial” hoặc “JavaScript Basics” trên YouTube từ kênh freeCodeCamp hoặc F8 Official).</li>
+            <li>Ghi lại 1 điều thú vị học được từ video hoặc tài liệu (gửi qua file text hoặc ảnh chụp).</li>
+        </ul>
+        <p><strong>Tài liệu tham khảo:</strong></p>
+        <ul>
+            <li>Website: <a href="https://www.w3schools.com">W3Schools</a> (HTML, CSS, JavaScript tutorials).</li>
+            <li>Bài viết: Tìm “HTML CSS cơ bản” hoặc “JavaScript cơ bản” trên <a href="https://viblo.asia">Viblo</a>.</li>
+            <li>Video: Kênh freeCodeCamp hoặc F8 Official (nếu cần phụ đề tiếng Việt).</li>
+        </ul>
+
+        <h3>2. Chuẩn bị môi trường làm việc</h3>
+        <ul>
+            <li>Cài đặt trình soạn thảo code (gợi ý: Visual Studio Code, tải từ <a href="https://code.visualstudio.com">code.visualstudio.com</a>).</li>
+            <li>Đảm bảo đã cài Git và có tài khoản GitHub (từ bài tập trước).</li>
+            <li>Kiểm tra cấu hình Git:
+                <pre>
+git --version
+git config --list
+                </pre>
+            </li>
+        </ul>
+
+        <h3>3. Tạo dự án trên GitHub</h3>
+        <ul>
+            <li>Tạo một repository trên GitHub với các yêu cầu:
+                <ul>
+                    <li>Tên: <code>learn-web-<tên-cháu></code> (ví dụ: <code>learn-web-hoang</code>).</li>
+                    <li>Chọn public hoặc private tùy ý.</li>
+                    <li>Tạo file <code>README.md</code> với nội dung:
+                        <ul>
+                            <li>Tiêu đề dự án (ví dụ: “Dự án thực hành HTML, CSS, JavaScript của Hoang”).</li>
+                            <li>Mô tả ngắn (2-3 câu về mục đích dự án).</li>
+                            <li>Thông tin cá nhân (tên, ngày hoàn thành).</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>Thêm email <code>pavennt@gmail.com</code> làm collaborator:
+                <ul>
+                    <li>Vào repository > Settings > Collaborators > Add people > Nhập email.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>4. Xây dựng trang web đơn giản</h3>
+        <ul>
+            <li>Tạo một dự án web với các file:
+                <ul>
+                    <li><code>index.html</code>: Cấu trúc trang web.</li>
+                    <li><code>styles.css</code>: Định dạng giao diện.</li>
+                    <li><code>script.js</code>: Thêm tính năng tương tác.</li>
+                </ul>
+            </li>
+            <li>Yêu cầu cụ thể:
+                <ul>
+                    <li><strong>HTML</strong>: Tạo một trang web có ít nhất:
+                        <ul>
+                            <li>Tiêu đề (<code>&lt;h1&gt;</code>).</li>
+                            <li>Đoạn văn giới thiệu bản thân (<code>&lt;p&gt;</code>).</li>
+                            <li>Một nút bấm (<code>&lt;button&gt;</code>) để kích hoạt tính năng JavaScript.</li>
+                        </ul>
+                    </li>
+                    <li><strong>CSS</strong>: Định dạng trang web:
+                        <ul>
+                            <li>Đổi màu nền hoặc màu chữ.</li>
+                            <li>Căn giữa tiêu đề và đoạn văn.</li>
+                            <li>Thêm hiệu ứng khi di chuột vào nút (hover, ví dụ: đổi màu nền).</li>
+                        </ul>
+                    </li>
+                    <li><strong>JavaScript</strong>: Thêm tính năng tương tác:
+                        <ul>
+                            <li>Khi bấm nút, hiển thị thông báo (alert) hoặc thay đổi nội dung một phần tử (ví dụ: đổi nội dung đoạn văn).</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>Tham khảo ví dụ:
+                <pre>
+&lt;!-- index.html --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="vi"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Trang Web Đầu Tiên&lt;/title&gt;
+    &lt;link rel="stylesheet" href="styles.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Chào mừng đến với trang web của tôi&lt;/h1&gt;
+    &lt;p id="intro"&gt;Tôi là [Tên cháu], đang học CNTT năm 3.&lt;/p&gt;
+    &lt;button onclick="changeText()"&gt;Nhấn để thay đổi&lt;/button&gt;
+    &lt;script src="script.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+&lt;!-- styles.css --&gt;
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f0f0f0;
+}
+h1 {
+    color: #333;
+}
+button {
+    padding: 10px 20px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #0b7dda;
+}
+
+&lt;!-- script.js --&gt;
+function changeText() {
+    document.getElementById("intro").innerText = "Cảm ơn bạn đã nhấn nút!";
+}
+                </pre>
+            </li>
+        </ul>
+
+        <h3>5. Đẩy code lên GitHub</h3>
+        <ul>
+            <li>Thực hiện ít nhất 3 commit với mô tả rõ ràng:
+                <ul>
+                    <li>Commit 1: “Thêm file index.html cơ bản”.</li>
+                    <li>Commit 2: “Thêm file styles.css và định dạng giao diện”.</li>
+                    <li>Commit 3: “Thêm file script.js và tính năng tương tác”.</li>
+                </ul>
+            </li>
+            <li>Đẩy code lên repository:
+                <ul>
+                    <li>Khởi tạo repository cục bộ:
+                        <pre>
+git init
+                        </pre>
+                    </li>
+                    <li>Thêm file và commit:
+                        <pre>
+git add .
+git commit -m "Mô tả thay đổi"
+                        </pre>
+                    </li>
+                    <li>Kết nối và đẩy lên GitHub:
+                        <pre>
+git remote add origin https://github.com/ten-chau/learn-web-<tên-cháu>.git
+git push -u origin main
+                        </pre>
+                    </li>
+                </ul>
+            </li>
+            <li>Nếu gặp lỗi xác thực, tạo Personal Access Token (trong Settings > Developer settings trên GitHub).</li>
+        </ul>
+
+        <h3>6. Nộp bài</h3>
+        <ul>
+            <li>Gửi link repository GitHub (ví dụ: <code>https://github.com/ten-chau/learn-web-<tên-cháu></code>) qua email hoặc tin nhắn.</li>
+            <li>Gửi file ghi chú về HTML, CSS, JavaScript và 1 điều thú vị học được (text, ảnh chụp, hoặc file PDF).</li>
+            <li>(Tùy chọn) Triển khai trang web lên GitHub Pages:
+                <ul>
+                    <li>Đẩy code vào nhánh <code>gh-pages</code> hoặc bật GitHub Pages trong Settings.</li>
+                    <li>Gửi link trang web (ví dụ: <code>https://ten-chau.github.io/learn-web-<tên-cháu></code>).</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h2>Lưu ý quan trọng</h2>
+        <div class="note">
+            <p><strong>Thời gian:</strong> Hoàn thành trong 3 ngày (khoảng 6-8 giờ học và thực hành).</p>
+            <p><strong>Xử lý lỗi:</strong> Nếu gặp lỗi (HTML không hiển thị, CSS không áp dụng, JavaScript không chạy), kiểm tra trên trình duyệt (F12 > Console) hoặc hỏi trên nhóm cộng đồng CNTT (Facebook, X).</p>
+            <p><strong>Công cụ hỗ trợ:</strong></p>
+            <ul>
+                <li>Visual Studio Code với extension Live Server để xem trước trang web.</li>
+                <li>GitHub Desktop để quản lý Git dễ hơn.</li>
+            </ul>
+            <p><strong>Kiểm tra kết quả:</strong> Repository sẽ được kiểm tra qua GitHub (commit, file, collaborator) cùng file ghi chú. Trang web sẽ được mở để kiểm tra giao diện và tính năng.</p>
+        </div>
+    </div>
+</body>
+</html>
